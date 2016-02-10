@@ -12,6 +12,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var bcrypt = require('bcrypt-nodejs');
 var async = require('async');
 var crypto = require('crypto');
+var flash = require('express-flash');
 require('./models/db')
 
 var routes = require('./routes/index');
@@ -50,6 +51,7 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(session({ secret: 'session secret key' }));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(logger('dev'));

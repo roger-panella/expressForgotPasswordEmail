@@ -1,6 +1,10 @@
 var express = require('express');
 var passport = require('passport');
 var bcrypt = require('bcrypt-nodejs');
+var async = require('async');
+var crypto = require('crypto');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-sendgrid-transport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../models/User');
 var router = express.Router();
@@ -63,6 +67,55 @@ router.get('/logout', function(req, res){
 router.get('/forgot', function(req, res){
   res.render('forgot', {
     user: req.user
+  });
+});
+
+router.post('/forgot', function(req, res, next){
+  async.waterfall([
+    function(done){
+      crypto.randomBytes(20, function(err, buf){
+        var token = buf.toString('hex');
+        done(err, token);
+      });
+    },
+    function(token, done) {
+      User.findOne({ email: req.body.email }, function(err, user){
+        if (!user) {
+          req.flash('error', 'No account with that email address exists.');
+          return res.redirect('/users/forgot');
+        }
+
+        user.resetPasswordToken = token;
+        user.restPasswordExpers = Date.now() + 3600000;
+        user.save(function(err){
+          done(err, token, user);
+        });
+      });
+    },
+    function(token, user, done) {
+      var options = {
+        auth: {
+          api_user: 'roger.panella',
+          api_key: 'ShowSpeak123'
+        }
+      }
+
+      var client = nodemailer.createTransport(smtpTransport(options));
+
+      var mailOptions = {
+        to: user.email,
+        from: 'rogerpanella@gmail.com',
+        subject: 'Authentic8 Password Reset',
+        text: 'You\'re receiving this because you requested a password reset from Authentic8. \n\n' + 'Please click on the following link to complete this process:\n\n' + 'http://' + req.headers.host + '/reset/' + token + '\n\n' + 'If you did not request this password change, please ignore. \n'
+      };
+      client.sendMail(mailOptions, function(err){
+        req.flash('info', 'An e-mail has been sent to ' + user.email + ' with password reset instructions');
+        done(err, 'done');
+      });
+    }
+  ], function(err){
+    if (err) return next(err);
+    res.redirect('/users/forget');
   });
 });
 
