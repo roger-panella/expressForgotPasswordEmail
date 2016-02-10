@@ -95,8 +95,8 @@ router.post('/forgot', function(req, res, next){
     function(token, user, done) {
       var options = {
         auth: {
-          api_user: 'roger.panella',
-          api_key: 'ShowSpeak123'
+          api_user:
+          api_key: 
         }
       }
 
