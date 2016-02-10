@@ -21,7 +21,7 @@ var app = express();
 
 var User = require('./models/User');
 passport.use(new LocalStrategy(function(username, password, done){
-  User.findONe({ username: username }, function(err, user){
+  User.findOne({ username: username }, function(err, user){
     if (err) return done(err);
     if (!user) return done(null, false, { message: 'Username not found' });
     user.comparePassword(password, function(err, isMatch){
