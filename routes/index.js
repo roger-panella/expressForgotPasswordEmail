@@ -11,6 +11,7 @@ router.get('/', function(req, res, next) {
     title: 'Express',
     user: req.user
    });
+   console.log(process.env.SGLOGIN)
 });
 
 module.exports = router;

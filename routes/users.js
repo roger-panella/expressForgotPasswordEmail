@@ -95,8 +95,8 @@ router.post('/forgot', function(req, res, next){
     function(token, user, done) {
       var options = {
         auth: {
-          api_user: process.env.sgLogin,
-          api_key: process.env.sgPass
+          api_user: process.env.SGLOGIN,
+          api_key: process.env.SGPASS
         }
       }
 

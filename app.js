@@ -1,11 +1,11 @@
 var express = require('express');
-require('dotenv').load();
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session')
+require('dotenv').config();
 // var mongoose = require('mongoose');
 var nodemailer = require('nodemailer');
 var passport = require('passport');
